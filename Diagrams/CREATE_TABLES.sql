@@ -1,0 +1,270 @@
+SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+CREATE SCHEMA IF NOT EXISTS `test` DEFAULT CHARACTER SET latin1 COLLATE latin1_swedish_ci ;
+
+USE `test`;
+
+CREATE  TABLE IF NOT EXISTS `test`.`Customer` (
+  `CustomerID` INT(11) NOT NULL ,
+  `Title` VARCHAR(45) NULL DEFAULT NULL ,
+  `FirstName` VARCHAR(45) NULL DEFAULT NULL ,
+  `LastName` VARCHAR(45) NULL DEFAULT NULL ,
+  `DateOfBirth` DATE NULL DEFAULT NULL ,
+  `Address` VARCHAR(45) NULL DEFAULT NULL ,
+  `Address2` VARCHAR(45) NULL DEFAULT NULL ,
+  `PostCode` VARCHAR(45) NULL DEFAULT NULL ,
+  `Telephone` VARCHAR(45) NULL DEFAULT NULL ,
+  `Mobile` VARCHAR(45) NULL DEFAULT NULL ,
+  `EmailAddress` VARCHAR(45) NULL DEFAULT NULL ,
+  `Comments` VARCHAR(45) NULL DEFAULT NULL ,
+  `Description` VARCHAR(45) NULL DEFAULT NULL ,
+  PRIMARY KEY (`CustomerID`) ,
+  CONSTRAINT `fk_Customer_Booking1`
+    FOREIGN KEY (`CustomerID` )
+    REFERENCES `test`.`Booking` (`CustomerID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci
+COMMENT = '\n\n';
+
+CREATE  TABLE IF NOT EXISTS `test`.`ServiceSubType` (
+  `ServiceSubTypeID` INT(11) NOT NULL ,
+  `Title` VARCHAR(45) NULL DEFAULT NULL ,
+  `Description` VARCHAR(45) NULL DEFAULT NULL ,
+  PRIMARY KEY (`ServiceSubTypeID`) ,
+  CONSTRAINT `fk_ServiceSubType_ServiceType1`
+    FOREIGN KEY (`ServiceSubTypeID` )
+    REFERENCES `test`.`ServiceType` (`ServiceSubTypeID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci
+COMMENT = '		';
+
+CREATE  TABLE IF NOT EXISTS `test`.`Booking` (
+  `CustomerID` INT(11) NOT NULL ,
+  `OperatorID` INT(11) NULL DEFAULT NULL ,
+  `ServiceID` INT(11) NOT NULL ,
+  `Quantity` INT(11) NOT NULL ,
+  `Price` DECIMAL NOT NULL ,
+  `PromotionCode` VARCHAR(45) NULL DEFAULT NULL ,
+  `BookingDate` DATE NULL DEFAULT NULL ,
+  `DeliveryDate` DATE NULL DEFAULT NULL ,
+  `DeliveryTime` TIME NULL DEFAULT NULL ,
+  `DeliveryAddress` VARCHAR(45) NULL DEFAULT NULL ,
+  PRIMARY KEY (`CustomerID`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci;
+
+CREATE  TABLE IF NOT EXISTS `test`.`Operator` (
+  `OperatorID` INT(11) NOT NULL ,
+  `Title` VARCHAR(45) NULL DEFAULT NULL ,
+  `FirstName` VARCHAR(45) NULL DEFAULT NULL ,
+  `LastName` VARCHAR(45) NULL DEFAULT NULL ,
+  `Address` VARCHAR(45) NULL DEFAULT NULL ,
+  `Address2` VARCHAR(45) NULL DEFAULT NULL ,
+  `PostCode` VARCHAR(45) NULL DEFAULT NULL ,
+  `Contact` VARCHAR(45) NULL DEFAULT NULL ,
+  `Contact2` VARCHAR(45) NULL DEFAULT NULL ,
+  `EmailAddress` VARCHAR(45) NULL DEFAULT NULL ,
+  `Country` VARCHAR(45) NULL DEFAULT NULL ,
+  PRIMARY KEY (`OperatorID`) ,
+  CONSTRAINT `fk_Operator_Booking1`
+    FOREIGN KEY (`OperatorID` )
+    REFERENCES `test`.`Booking` (`OperatorID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci;
+
+CREATE  TABLE IF NOT EXISTS `test`.`Service` (
+  `ServiceID` INT(11) NOT NULL ,
+  `Active` INT(11) NULL DEFAULT NULL ,
+  `Type` INT(11) NOT NULL ,
+  `Subtype` INT(11) NOT NULL ,
+  `Title` VARCHAR(45) NULL DEFAULT NULL ,
+  `Description` VARCHAR(45) NULL DEFAULT NULL ,
+  `Brand` VARCHAR(45) NULL DEFAULT NULL ,
+  `CostPerUnit` DECIMAL NULL DEFAULT NULL ,
+  `Price` DECIMAL NULL DEFAULT NULL ,
+  `PromotionPrice` VARCHAR(45) NULL DEFAULT NULL ,
+  `Duration` VARCHAR(45) NULL DEFAULT NULL ,
+  `Notes` VARCHAR(45) NULL DEFAULT NULL ,
+  `Notice` VARCHAR(45) NULL DEFAULT NULL ,
+  `Prerequisites` VARCHAR(45) NULL DEFAULT NULL ,
+  `Visibility` VARCHAR(45) NULL DEFAULT NULL ,
+  `LoyalitySchemeID` INT(11) NULL DEFAULT NULL ,
+  `CancellationPolicyID` INT(11) NULL DEFAULT NULL ,
+  PRIMARY KEY (`ServiceID`) ,
+  CONSTRAINT `fk_Service_Booking1`
+    FOREIGN KEY (`ServiceID` )
+    REFERENCES `test`.`Booking` (`ServiceID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Service_UploadPhoto1`
+    FOREIGN KEY (`ServiceID` )
+    REFERENCES `test`.`UploadPhoto` (`ServiceID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci;
+
+CREATE  TABLE IF NOT EXISTS `test`.`ServiceType` (
+  `ServiceTypeID` INT(11) NOT NULL ,
+  `ServiceSubTypeID` INT(11) NULL DEFAULT NULL ,
+  `Title` VARCHAR(45) NULL DEFAULT NULL ,
+  `Description` VARCHAR(45) NULL DEFAULT NULL ,
+  PRIMARY KEY (`ServiceTypeID`) ,
+  CONSTRAINT `fk_ServiceType_Service1`
+    FOREIGN KEY (`ServiceTypeID` )
+    REFERENCES `test`.`Service` (`Type` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci;
+
+CREATE  TABLE IF NOT EXISTS `test`.`BookingConditions` (
+  `BookingConditionID` INT(11) NOT NULL ,
+  `Title` VARCHAR(45) NULL DEFAULT NULL ,
+  `Condition` VARCHAR(45) NULL DEFAULT NULL ,
+  `Description` VARCHAR(45) NULL DEFAULT NULL ,
+  `SrviceID` VARCHAR(45) NULL DEFAULT NULL ,
+  PRIMARY KEY (`BookingConditionID`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci;
+
+CREATE  TABLE IF NOT EXISTS `test`.`LoyaltySchemes` (
+  `LoyaltySchemeID` INT(11) NOT NULL ,
+  `Title` VARCHAR(45) NULL DEFAULT NULL ,
+  `Scheme` VARCHAR(45) NULL DEFAULT NULL ,
+  `Description` VARCHAR(45) NULL DEFAULT NULL ,
+  PRIMARY KEY (`LoyaltySchemeID`) ,
+  CONSTRAINT `fk_LoyaltySchemes_Service1`
+    FOREIGN KEY (`LoyaltySchemeID` )
+    REFERENCES `test`.`Service` (`LoyalitySchemeID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci;
+
+CREATE  TABLE IF NOT EXISTS `test`.`CancellationPolicies` (
+  `CancellationPolicyID` INT(11) NOT NULL ,
+  `Title` VARCHAR(45) NULL DEFAULT NULL ,
+  `Policy` VARCHAR(45) NULL DEFAULT NULL ,
+  `Description` VARCHAR(45) NULL DEFAULT NULL ,
+  PRIMARY KEY (`CancellationPolicyID`) ,
+  CONSTRAINT `fk_CancellationPolicies_Service1`
+    FOREIGN KEY (`CancellationPolicyID` )
+    REFERENCES `test`.`Service` (`CancellationPolicyID` )
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci;
+
+CREATE  TABLE IF NOT EXISTS `test`.`UploadPhoto` (
+  `UploadPhotoID` INT(11) NOT NULL ,
+  `ServiceID` INT(11) NOT NULL ,
+  `Title` VARCHAR(45) NOT NULL ,
+  `Photo` BINARY NOT NULL ,
+  `Description` VARCHAR(45) NULL DEFAULT NULL ,
+  PRIMARY KEY (`UploadPhotoID`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci;
+
+CREATE  TABLE IF NOT EXISTS `test`.`Business` (
+  `BusinessID` INT(11) NOT NULL ,
+  `TypeID` VARCHAR(45) NULL DEFAULT NULL ,
+  `Title` VARCHAR(45) NULL DEFAULT NULL ,
+  `DescriptionShort` VARCHAR(45) NULL DEFAULT NULL ,
+  `Description` VARCHAR(45) NULL DEFAULT NULL ,
+  `FirstCompleted` DATE NULL DEFAULT NULL ,
+  `LastCompleted` DATE NULL DEFAULT NULL ,
+  `NextBooking` DATE NULL DEFAULT NULL ,
+  PRIMARY KEY (`BusinessID`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci;
+
+CREATE  TABLE IF NOT EXISTS `test`.`BusinessAddress` (
+  `BusinessAddressID` INT(11) NOT NULL ,
+  `BusinessID` INT(11) NOT NULL ,
+  `Type` VARCHAR(45) NULL DEFAULT NULL ,
+  `Status` VARCHAR(45) NULL DEFAULT NULL ,
+  `Attention` VARCHAR(45) NULL DEFAULT NULL ,
+  `Addressee` VARCHAR(45) NULL DEFAULT NULL ,
+  `Line1` VARCHAR(45) NULL DEFAULT NULL ,
+  `Line2` VARCHAR(45) NULL DEFAULT NULL ,
+  `Line3` VARCHAR(45) NULL DEFAULT NULL ,
+  `County/State` VARCHAR(45) NULL DEFAULT NULL ,
+  `PostCode` VARCHAR(45) NULL DEFAULT NULL ,
+  `Country` VARCHAR(45) NULL DEFAULT NULL ,
+  `Lat` VARCHAR(45) NULL DEFAULT NULL ,
+  `Ing` VARCHAR(45) NULL DEFAULT NULL ,
+  `OpenHours` VARCHAR(45) NULL DEFAULT NULL ,
+  `Visibility` VARCHAR(45) NULL DEFAULT NULL ,
+  `Restrictions` VARCHAR(45) NULL DEFAULT NULL ,
+  PRIMARY KEY (`BusinessAddressID`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci;
+
+CREATE  TABLE IF NOT EXISTS `test`.`BusinessDefault` (
+  `BusinessDefaultID` INT(11) NOT NULL ,
+  `BusinessAddressID` VARCHAR(45) NULL DEFAULT NULL ,
+  `DayOfWeek` VARCHAR(45) NULL DEFAULT NULL ,
+  `StartTime` TIME NULL DEFAULT NULL ,
+  `EndTime` TIME NULL DEFAULT NULL ,
+  PRIMARY KEY (`BusinessDefaultID`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci;
+
+CREATE  TABLE IF NOT EXISTS `test`.`BusinessOperators` (
+  `BusinessOperatorID` INT(11) NOT NULL ,
+  `BusinessID` INT(11) NULL DEFAULT NULL ,
+  `BusinessAddressID` INT(11) NULL DEFAULT NULL ,
+  `TypeID` INT(11) NULL DEFAULT NULL ,
+  `Schedule` VARCHAR(45) NULL DEFAULT NULL ,
+  `Status` VARCHAR(45) NULL DEFAULT NULL ,
+  PRIMARY KEY (`BusinessOperatorID`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci;
+
+CREATE  TABLE IF NOT EXISTS `test`.`Audit` (
+  `AuditID` INT(11) NOT NULL ,
+  `EventID` INT(11) NULL DEFAULT NULL ,
+  `AuditStr` VARCHAR(45) NULL DEFAULT NULL ,
+  `AuditDate` DATE NULL DEFAULT NULL ,
+  `BookingID` INT(11) NULL DEFAULT NULL ,
+  `Subtype` VARCHAR(45) NULL DEFAULT NULL ,
+  `UserID` INT(11) NULL DEFAULT NULL ,
+  `PerformerID` INT(11) NULL DEFAULT NULL ,
+  `ValueKey` VARCHAR(45) NULL DEFAULT NULL ,
+  `Value1` VARCHAR(45) NULL DEFAULT NULL ,
+  `Value2` VARCHAR(45) NULL DEFAULT NULL ,
+  `ApplicationID` INT(11) NULL DEFAULT NULL ,
+  `LanguageCode` INT(11) NULL DEFAULT NULL ,
+  PRIMARY KEY (`AuditID`) )
+ENGINE = InnoDB
+DEFAULT CHARACTER SET = latin1
+COLLATE = latin1_swedish_ci
+COMMENT = '	';
+
+
+SET SQL_MODE=@OLD_SQL_MODE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
+SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
